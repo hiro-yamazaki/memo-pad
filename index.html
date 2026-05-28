@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>想いの記</title>
+
+  <!-- 1. CSS: reset → 自前style の順で適用 -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- 2. jQuery を head で読み込み (授業と同じ 2.1.3 ローカル版) -->
+  <script src="js/jquery-2.1.3.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- 3. ヘッダー: アプリ名(ロゴ) + サブタイトル(機能) + 安心訴求 -->
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-name">想いの記</span>
+        <span class="brand-yomi">おもいのき</span>
+      </div>
+      <p class="brand-tagline">今を記録するメモ帳</p>
+      <p class="brand-safety">あなたの言葉は、このブラウザの中だけに、しずかに残ります。</p>
+    </header>
+
+    <!-- 4. 投稿エリア (X的なコンポーザー) -->
+    <main class="compose">
+      <p class="compose-prompt">いま、何を思ってる？</p>
+      <div class="input-area">
+        <input id="title" type="text" placeholder="一言でいうと（感情、出来事）" />
+        <textarea id="text" placeholder="なぜそう思う？"></textarea>
+      </div>
+      <div class="button-area">
+        <button id="clear" type="button" class="btn-secondary">すべて消す</button>
+        <button id="save" type="button" class="btn-primary">記す</button>
+      </div>
+    </main>
+
+    <!-- 5. 検索フィルタ -->
+    <div class="search-area">
+      <input id="search" type="text" placeholder="ことばを探す" />
+    </div>
+
+    <!-- 6. タイムライン (新しいものが上) -->
+    <ul id="list">
+      <!-- ここに動的に挿入される -->
+    </ul>
+
+    <footer>
+      ここは、あなたが言葉をしずかに置いておく場所です。<br />
+      <span class="footer-safety">保存先はあなたのブラウザの中だけ ── どこにも送られません。</span>
+    </footer>
+
+  </div>
+
+  <!-- 7. メインスクリプト -->
+  <script src="js/script.js"></script>
+</body>
+
+</html>
