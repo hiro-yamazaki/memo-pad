@@ -82,6 +82,23 @@ function createMemoLi(title, body, createdAt) {
     $("<div>", { class: "memo-date" }).text(formatDate(createdAt))
   );
 
+  // [見た目だけ] X風アクションバー (返信/リポスト/いいね/ブックマーク)。
+  // 学習対象の localStorage 処理には一切関与しない純粋な装飾。
+  const actions = [
+    { cls: "reply",    icon: "💬", label: "返信" },
+    { cls: "repost",   icon: "🔁", label: "リポスト" },
+    { cls: "like",     icon: "♡",  label: "いいね" },
+    { cls: "bookmark", icon: "🔖", label: "ブックマーク" }
+  ];
+  const $actions = $("<div>", { class: "memo-actions" });
+  actions.forEach(function (a) {
+    $actions.append(
+      $("<span>", { class: "action " + a.cls, title: a.label })
+        .append($("<span>", { class: "action-icon" }).text(a.icon))
+    );
+  });
+  $li.append($actions);
+
   return $li;
 }
 
@@ -129,9 +146,9 @@ $("#save").on("click", function () {
   const title = $("#title").val().trim(); // 前後の空白は除去
   const body = $("#text").val();          // 本文は改行を残すので trim しない
 
-  // 見出し必須チェック
+  // ひとこと(必須) チェック
   if (!title) {
-    alert("見出しを入力してください");
+    alert("ひとことを入力してください");
     return;
   }
 
@@ -302,9 +319,9 @@ $("#list").on("blur", ".memo-title, .memo-body", function () {
   const newTitle = $li.find(".memo-title").text().trim();
   const newBody = $li.find(".memo-body").text();
 
-  // 見出しを空にした場合は元に戻す (キー無しでは保存できないため)
+  // ひとことを空にした場合は元に戻す (キー無しでは保存できないため)
   if (!newTitle) {
-    alert("見出しは空にできません");
+    alert("ひとことは空にできません");
     $li.find(".memo-title").text(oldKey);
     return;
   }
@@ -323,8 +340,8 @@ $("#list").on("blur", ".memo-title, .memo-body", function () {
   if (newTitle !== oldKey) {
     // 別の既存メモと衝突するなら拒否
     if (localStorage.getItem(newTitle) !== null) {
-      alert("同じ見出しの記録が既にあります");
-      $li.find(".memo-title").text(oldKey); // 見出しを元に戻す
+      alert("同じひとことの記録が既にあります");
+      $li.find(".memo-title").text(oldKey); // ひとことを元に戻す
       return;
     }
     localStorage.removeItem(oldKey);   // 旧キーは消す

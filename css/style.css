@@ -1,29 +1,30 @@
 /* ============================================================
- * 想いの記 - スタイル
+ * つぶやきメモ - スタイル (X / Twitter ライトモード風)
  *
- * デザイン方針: X (旧 Twitter) 風のタイムライン
- *   - グレースケール + 赤の差し色
- *   - 高コントラスト・可読性重視
- *   - sans-serif で統一 (装飾より読みやすさ)
- *   - 投稿フォーム → 検索 → タイムライン の縦並び
- *   - 新しい投稿が上に来るタイムライン (script.js でソート)
+ * デザイン方針:
+ *   - 白背景・高コントラストで可読性を最大化 (本文 #0f1419 で WCAG AA 余裕)
+ *   - 入力欄は「ひとこと(主) → 詳しく書く(従)」の明確な主従構造
+ *   - 差し色は X 青 (#1d9bf0) 1色、必須印だけ赤 (#f4212e)
+ *   - 各ポストはアバター丸 + 本文 + アクションバーの3段構成
+ *   - 角丸ピル型ボタン (X と同じ)、その他は控えめ
+ *   - フォントは system-ui ベース
  *
- * 配色 (グレースケール + 赤):
- *   背景         #000000   純黒 (X と同様)
- *   カード境界   #2f3336   薄いグレーで区切る
- *   入力背景     #16181c   投稿欄/検索欄のごく薄いグレー
- *   主要文字     #e7e9ea   ほぼ白 (純白を避けて目に優しく)
- *   副文字       #71767b   日付・読み仮名・補助テキスト
- *   アクセント赤 #ef4444   投稿ボタン・フォーカス枠・強調
- *   赤ホバー     #dc2626   投稿ボタンのホバー
- *
- * タイポグラフィ:
- *   見出し (タイトル)   17px / bold
- *   本文                15px / 通常
- *   プロンプト           20px / bold (compose-prompt)
- *   メタ情報             12px / 副色
- *   行間 1.6 (可読性優先)
+ * 配色:
+ *   背景             #ffffff
+ *   主要文字         #0f1419   ほぼ黒、X ライト公式と同色
+ *   副文字           #536471   ラベル補助・日時・読み仮名
+ *   薄い境界         #eff3f4
+ *   濃い境界         #cfd9de
+ *   入力背景(検索)   #eff3f4
+ *   アクセント青     #1d9bf0   ボタン / フォーカス
+ *   青ホバー         #1a8cd8
+ *   必須印赤         #f4212e
+ *   いいねピンク     #f91880
+ *   リポスト緑       #00ba7c
+ *   アバター         #cfd9de   薄灰プレースホルダー + #8b98a5 シルエット
+ *   ホバー背景       rgba(15,20,25,0.03)
  * ============================================================ */
+
 
 /* ====== 全体の土台 ====== */
 * {
@@ -31,13 +32,14 @@
 }
 
 body {
-  background: #000000;
-  color: #e7e9ea;
+  background: #ffffff;
+  color: #0f1419;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Helvetica Neue", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI",
     Meiryo, sans-serif;
-  line-height: 1.6;
-  padding: 20px 16px 24px;
+  line-height: 1.5;
+  padding: 0;
+  margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -45,15 +47,23 @@ body {
 .container {
   max-width: 600px;
   margin: 0 auto;
+  border-left: 1px solid #eff3f4;
+  border-right: 1px solid #eff3f4;
+  min-height: 100vh;
 }
 
+
 /* ============================================================
- * ヘッダー (ロゴ的に控えめに)
+ * ヘッダー (Xのトップバー風: 半透明 sticky)
  * ============================================================ */
 .site-header {
-  padding: 8px 0 16px;
-  border-bottom: 1px solid #2f3336;
-  margin-bottom: 20px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #eff3f4;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.85);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .brand {
@@ -64,115 +74,184 @@ body {
 
 .brand-name {
   font-size: 20px;
-  font-weight: 700;
-  color: #e7e9ea;
-  letter-spacing: 0.02em;
+  font-weight: 800;
+  color: #0f1419;
+  letter-spacing: 0.01em;
 }
 
-.brand-yomi {
-  font-size: 12px;
-  color: #71767b;
-  letter-spacing: 0.18em;
+.brand-handle {
+  font-size: 13px;
+  color: #536471;
+  letter-spacing: 0.02em;
 }
 
 .brand-tagline {
-  margin-top: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #c0c4c8;
-  letter-spacing: 0.02em;
+  margin-top: 6px;
+  font-size: 13px;
+  color: #0f1419;
 }
 
 .brand-safety {
-  margin-top: 4px;
+  margin-top: 2px;
   font-size: 12px;
-  color: #71767b;
-  letter-spacing: 0.02em;
+  color: #536471;
+}
+
+
+/* ============================================================
+ * 投稿エリア (X コンポーザー: アバター + 本文)
+ * ============================================================ */
+.compose {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #eff3f4;
+}
+
+.compose-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #cfd9de;
+  flex-shrink: 0;
+  background-image:
+    radial-gradient(circle at 50% 38%, #8b98a5 0 10px, transparent 11px),
+    radial-gradient(ellipse 60% 50% at 50% 95%, #8b98a5 0 70%, transparent 71%);
+  background-repeat: no-repeat;
+}
+
+.compose-main {
+  flex: 1;
+  min-width: 0;
 }
 
 /* ============================================================
- * 投稿エリア (X風コンポーザー)
+ * 入力フィールド (主従構造)
+ *   .field-primary   = ひとこと (大きく、太く、目立つ)
+ *   .field-secondary = 詳しく書く (小さく、控えめに)
  * ============================================================ */
-.compose {
-  background: transparent;
-  border-bottom: 1px solid #2f3336;
-  padding-bottom: 16px;
-  margin-bottom: 20px;
+.field {
+  margin-bottom: 18px;
 }
 
-.compose-prompt {
-  font-size: 20px;
+.field-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
   font-weight: 700;
-  color: #e7e9ea;
-  margin-bottom: 14px;
-  letter-spacing: 0.01em;
+  color: #0f1419;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
 }
 
-.input-area {
-  background: #16181c;
-  border: 1px solid #2f3336;
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
-  transition: border-color 0.15s ease;
+.field-required {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f4212e;
+  border: 1px solid #f4212e;
+  border-radius: 4px;
+  padding: 1px 5px;
+  letter-spacing: 0.05em;
 }
 
-.input-area:focus-within {
-  border-color: #3a3f44;
+.field-optional {
+  font-size: 11px;
+  font-weight: 600;
+  color: #536471;
+  border: 1px solid #cfd9de;
+  border-radius: 4px;
+  padding: 1px 5px;
+  letter-spacing: 0.05em;
 }
 
-#title,
-#text {
+/* ── メイン入力: いまの気持ちは？ (textarea で縦に広く) ── */
+.field-primary #title {
+  display: block;
   width: 100%;
-  background: transparent;
-  border: none;
-  color: #e7e9ea;
+  background: #ffffff;
+  border: 1px solid #cfd9de;
+  border-radius: 12px;
+  color: #0f1419;
+  font-size: 22px;
+  font-weight: 700;
+  font-family: inherit;
+  padding: 16px 18px;
+  min-height: 96px;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  resize: vertical;
+  caret-color: #1d9bf0;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field-primary #title::placeholder {
+  color: #8b98a5;
+  font-weight: 500;
+}
+
+/* フォーカスリング: 読込時の autofocus でも目立つよう、青2層 (4px) で強調 */
+.field-primary #title:focus {
+  outline: none;
+  border-color: #1d9bf0;
+  box-shadow: 0 0 0 4px rgba(29, 155, 240, 0.18);
+}
+
+/* ── 任意入力: 詳しく書く ── */
+.field-secondary {
+  /* 視覚的に主入力より一段下げる: ラベルも控えめ、枠も薄く */
+  opacity: 0.95;
+}
+
+.field-secondary .field-label {
+  font-weight: 600;
+  color: #536471;
+}
+
+.field-secondary #text {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #eff3f4;
+  border-radius: 10px;
+  color: #0f1419;
   font-size: 15px;
   font-family: inherit;
-  letter-spacing: 0.01em;
-}
-
-#title {
-  font-size: 17px;
-  font-weight: 700;
-  padding: 6px 0;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #2f3336;
-}
-
-#text {
-  height: 88px;
-  padding: 8px 0 0;
-  line-height: 1.65;
+  padding: 10px 14px;
+  line-height: 1.55;
+  height: 80px;
   resize: vertical;
+  letter-spacing: 0.01em;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-#title:focus,
-#text:focus {
+.field-secondary #text::placeholder {
+  color: #8b98a5;
+}
+
+.field-secondary #text:focus {
   outline: none;
+  border-color: #1d9bf0;
+  box-shadow: 0 0 0 3px rgba(29, 155, 240, 0.15);
 }
 
-#title::placeholder,
-#text::placeholder {
-  color: #5b6065;
-}
 
-/* ====== ボタン (記す / すべて消す) ====== */
+/* ====== ボタン (つぶやく / すべて消す) ====== */
 .button-area {
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eff3f4;
 }
 
 .btn-primary,
 .btn-secondary {
   height: 38px;
   padding: 0 22px;
-  border-radius: 999px;       /* X風のピル型 */
-  font-size: 14px;
+  border-radius: 999px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.05em;
   cursor: pointer;
   font-family: inherit;
   transition: background 0.15s ease, border-color 0.15s ease,
@@ -180,14 +259,14 @@ body {
 }
 
 .btn-primary {
-  background: #ef4444;        /* 赤の差し色 */
-  border: 1px solid #ef4444;
+  background: #1d9bf0;
+  border: 1px solid #1d9bf0;
   color: #ffffff;
 }
 
 .btn-primary:hover {
-  background: #dc2626;
-  border-color: #dc2626;
+  background: #1a8cd8;
+  border-color: #1a8cd8;
 }
 
 .btn-primary:active {
@@ -196,131 +275,179 @@ body {
 
 .btn-secondary {
   background: transparent;
-  border: 1px solid #3a3f44;
-  color: #c0c4c8;
+  border: 1px solid #cfd9de;
+  color: #0f1419;
 }
 
 .btn-secondary:hover {
-  border-color: #ef4444;
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.06);
+  border-color: #f4212e;
+  color: #f4212e;
+  background: rgba(244, 33, 46, 0.06);
 }
 
+
 /* ============================================================
- * 検索フィルタ
+ * 検索フィルタ (Xの検索バー風 - 丸ピル + 虫眼鏡)
  * ============================================================ */
 .search-area {
-  margin-bottom: 8px;
+  position: relative;
+  margin: 12px 16px 8px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  color: #536471;
+  font-size: 13px;
+  pointer-events: none;
+  opacity: 0.7;
 }
 
 #search {
   width: 100%;
-  padding: 10px 16px;
-  background: #16181c;
-  border: 1px solid #2f3336;
+  padding: 10px 16px 10px 40px;
+  background: #eff3f4;
+  border: 1px solid transparent;
   border-radius: 999px;
-  color: #e7e9ea;
-  font-size: 14px;
-  letter-spacing: 0.02em;
+  color: #0f1419;
+  font-size: 15px;
   font-family: inherit;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 #search::placeholder {
-  color: #5b6065;
+  color: #8b98a5;
 }
 
 #search:focus {
   outline: none;
-  border-color: #ef4444;
+  background: #ffffff;
+  border-color: #1d9bf0;
 }
+
 
 /* ============================================================
  * タイムライン (各ポスト = 1件のメモ)
- *
- * X的な雰囲気を出すため、カード型ではなく
- * 上下のボーダーだけで区切る連続したリスト
+ *   CSS Grid で「アバター40px | 本文の縦積み」を再現
  * ============================================================ */
 #list {
-  margin-top: 4px;
+  margin-top: 0;
+  list-style: none;
+  padding: 0;
 }
 
 #list li {
-  padding: 16px 4px;
-  border-bottom: 1px solid #2f3336;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  column-gap: 12px;
+  row-gap: 2px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eff3f4;
   position: relative;
   transition: background 0.12s ease;
 }
 
 #list li:hover {
-  background: rgba(231, 233, 234, 0.03);
+  background: rgba(15, 20, 25, 0.03);
 }
 
-/* 見出し (一言でいうと…) */
+/* アバター丸 (単色プレースホルダー / 人型シルエット) */
+#list li::before {
+  content: "";
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #cfd9de;
+  grid-column: 1;
+  grid-row: 1 / span 10;
+  background-image:
+    radial-gradient(circle at 50% 38%, #8b98a5 0 10px, transparent 11px),
+    radial-gradient(ellipse 60% 50% at 50% 95%, #8b98a5 0 70%, transparent 71%);
+  background-repeat: no-repeat;
+}
+
+/* 右カラム(2列目)に縦並びさせる */
+#list li > .memo-title,
+#list li > .memo-body,
+#list li > .memo-date,
+#list li > .memo-actions {
+  grid-column: 2;
+  min-width: 0;
+}
+
+/* 見出し (いまの気持ち) - 改行を含む可能性があるので pre-wrap で保持 */
 .memo-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 700;
-  color: #e7e9ea;
+  color: #0f1419;
   letter-spacing: 0.01em;
-  margin-bottom: 4px;
-  padding: 3px 6px;
-  margin-left: -6px;
+  margin-bottom: 2px;
+  padding: 2px 6px;
   border-radius: 4px;
   cursor: text;
-  padding-right: 40px;        /* 削除ボタン分の余白 */
+  padding-right: 36px;
   transition: background 0.12s ease;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .memo-title:hover {
-  background: rgba(239, 68, 68, 0.06);
+  background: rgba(29, 155, 240, 0.08);
 }
 
-/* 本文 (なぜそう思う？の回答) */
+/* 本文 (詳しく書く) */
 .memo-body {
-  color: #c0c4c8;
+  color: #0f1419;
   font-size: 15px;
-  line-height: 1.65;
+  line-height: 1.5;
   white-space: pre-wrap;
   word-wrap: break-word;
-  padding: 3px 6px;
-  margin-left: -6px;
+  padding: 2px 6px;
   border-radius: 4px;
   cursor: text;
   transition: background 0.12s ease;
 }
 
 .memo-body:hover {
-  background: rgba(239, 68, 68, 0.06);
+  background: rgba(29, 155, 240, 0.08);
 }
 
-/* contenteditable で編集中 (赤の輪郭) */
+/* 本文が空のときは少し控えめに */
+.memo-body:empty {
+  display: none;
+}
+
+/* contenteditable 編集中 (青の輪郭) */
 [contenteditable="true"]:focus {
   outline: none;
-  background: #0a0a0a !important;
-  box-shadow: inset 0 0 0 1px #ef4444;
+  background: #ffffff !important;
+  box-shadow: inset 0 0 0 1px #1d9bf0;
 }
 
-/* 作成日時 (右下、小さく) */
+/* 作成日時 */
 .memo-date {
-  font-size: 12px;
-  color: #71767b;
-  letter-spacing: 0.05em;
-  margin-top: 8px;
-  text-align: right;
-  font-feature-settings: "tnum";  /* 数字を等幅に */
+  font-size: 13px;
+  color: #536471;
+  letter-spacing: 0.02em;
+  margin-top: 6px;
+  padding: 0 6px;
+  text-align: left;
+  font-feature-settings: "tnum";
 }
 
-/* 1件削除ボタン (X風に右上、ホバーで赤) */
+/* 1件削除ボタン */
 .memo-delete {
   position: absolute;
-  top: 12px;
-  right: 4px;
-  width: 28px;
-  height: 28px;
+  top: 10px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #71767b;
+  color: #536471;
   font-size: 18px;
   cursor: pointer;
   line-height: 1;
@@ -328,20 +455,58 @@ body {
 }
 
 .memo-delete:hover {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
+  background: rgba(244, 33, 46, 0.12);
+  color: #f4212e;
 }
+
+
+/* ============================================================
+ * アクションバー (返信 / リポスト / いいね / ブックマーク)
+ * 見た目だけ。クリックしても何も起きない (装飾)。
+ * ============================================================ */
+.memo-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 425px;
+  margin-top: 8px;
+  padding: 0 6px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #536471;
+  font-size: 13px;
+  cursor: default;
+  padding: 4px 8px;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
+  user-select: none;
+}
+
+.action-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.action.reply:hover    { color: #1d9bf0; background: rgba(29, 155, 240, 0.12); }
+.action.repost:hover   { color: #00ba7c; background: rgba(0, 186, 124, 0.12); }
+.action.like:hover     { color: #f91880; background: rgba(249, 24, 128, 0.12); }
+.action.bookmark:hover { color: #1d9bf0; background: rgba(29, 155, 240, 0.12); }
+
 
 /* ============================================================
  * フッター
  * ============================================================ */
 footer {
-  margin-top: 40px;
-  padding-top: 18px;
-  border-top: 1px solid #2f3336;
+  margin: 0 16px;
+  padding: 18px 0 24px;
+  border-top: 1px solid #eff3f4;
   text-align: center;
   font-size: 13px;
-  color: #71767b;
+  color: #536471;
   line-height: 1.7;
 }
 
@@ -350,5 +515,5 @@ footer {
   margin-top: 4px;
   font-size: 11px;
   letter-spacing: 0.05em;
-  color: #5b6065;
+  color: #8b98a5;
 }

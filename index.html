@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>想いの記</title>
+  <title>つぶやきメモ</title>
 
   <!-- 1. CSS: reset → 自前style の順で適用 -->
   <link rel="stylesheet" href="css/reset.css" />
@@ -20,29 +20,51 @@
     <!-- 3. ヘッダー: アプリ名(ロゴ) + サブタイトル(機能) + 安心訴求 -->
     <header class="site-header">
       <div class="brand">
-        <span class="brand-name">想いの記</span>
-        <span class="brand-yomi">おもいのき</span>
+        <span class="brand-name">つぶやきメモ</span>
+        <span class="brand-handle">@tubuyaki_memo</span>
       </div>
-      <p class="brand-tagline">今を記録するメモ帳</p>
-      <p class="brand-safety">あなたの言葉は、このブラウザの中だけに、しずかに残ります。</p>
+      <p class="brand-tagline">今を記録するメモ帳です。今の心の中にある何かに名前をつけていきましょう。</p>
     </header>
 
-    <!-- 4. 投稿エリア (X的なコンポーザー) -->
+    <!-- 4. 投稿エリア (X的なコンポーザー)
+         主従設計: 「ひとこと」をメイン入力、「詳しく書く」を任意入力として
+         明示的にラベル + 必須/任意マーク + 補助テキストで階層を分ける。 -->
     <main class="compose">
-      <p class="compose-prompt">いま、何を思ってる？</p>
-      <div class="input-area">
-        <input id="title" type="text" placeholder="一言でいうと（感情、出来事）" />
-        <textarea id="text" placeholder="なぜそう思う？"></textarea>
-      </div>
-      <div class="button-area">
-        <button id="clear" type="button" class="btn-secondary">すべて消す</button>
-        <button id="save" type="button" class="btn-primary">記す</button>
+      <div class="compose-avatar" aria-hidden="true"></div>
+      <div class="compose-main">
+
+        <!-- メイン入力: いまの気持ちは？ (必須)
+             textarea にして縦スペースを確保、自由に複数行で書けるように。
+             autofocus でページ読み込み時にカーソルが入り、青フォーカスリングで
+             「ここに書く」が一目で分かる。 -->
+        <div class="field field-primary">
+          <label for="title" class="field-label">
+            いまの気持ちは？
+            <span class="field-required" aria-label="必須">必須</span>
+          </label>
+          <textarea id="title" rows="3" autofocus placeholder="例：ホッとした、なんだかうれしい、モヤモヤ"></textarea>
+        </div>
+
+        <!-- 任意入力: 何があったかも残しておく -->
+        <div class="field field-secondary">
+          <label for="text" class="field-label">
+            何があったかも残しておく
+            <span class="field-optional" aria-label="任意">任意</span>
+          </label>
+          <textarea id="text" placeholder="例：朝のミーティングで思いがけず褒められた。"></textarea>
+        </div>
+
+        <div class="button-area">
+          <button id="clear" type="button" class="btn-secondary">すべて消す</button>
+          <button id="save" type="button" class="btn-primary">つぶやく</button>
+        </div>
       </div>
     </main>
 
     <!-- 5. 検索フィルタ -->
     <div class="search-area">
-      <input id="search" type="text" placeholder="ことばを探す" />
+      <span class="search-icon" aria-hidden="true">🔍</span>
+      <input id="search" type="text" placeholder="つぶやきを検索" />
     </div>
 
     <!-- 6. タイムライン (新しいものが上) -->
