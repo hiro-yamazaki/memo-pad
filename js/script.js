@@ -383,3 +383,42 @@ $("#search").on("input", function () {
     }
   });
 });
+
+
+/* ============================================================
+ * 8. [遊び] アクションバーの小演出
+ *   - リポスト: カーソルを乗せたらそのポストを一番上にプレッペンド
+ *   - いいね: クリックで ♡ → ♥ にトグル、隣に「100」がポンと出る
+ * 純粋な見た目のお楽しみで、localStorage には書き込まない。
+ * ============================================================ */
+
+// リポスト: hover でリスト最上段へ
+$("#list").on("mouseenter", ".action.repost", function () {
+  const $li = $(this).closest("li");
+  // すでに一番上ならスキップ (連続発火防止 + 無駄なDOM操作回避)
+  if ($li.is("#list > li:first-child")) return;
+  // 検索でフィルタ中は順序変更しない (UX が壊れる)
+  if ($("#search").val()) return;
+
+  $li.prependTo("#list").addClass("just-reposted");
+  setTimeout(function () {
+    $li.removeClass("just-reposted");
+  }, 800);
+});
+
+// いいね: クリックで ♡↔♥ トグル、隣に 100 を表示
+$("#list").on("click", ".action.like", function () {
+  const $like = $(this);
+  const $icon = $like.find(".action-icon");
+  const liked = $like.toggleClass("liked").hasClass("liked");
+
+  $icon.text(liked ? "♥" : "♡");
+
+  if (liked) {
+    if (!$like.find(".action-count").length) {
+      $like.append($("<span>", { class: "action-count" }).text("100"));
+    }
+  } else {
+    $like.find(".action-count").remove();
+  }
+});
