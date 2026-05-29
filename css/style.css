@@ -197,6 +197,18 @@ body {
   box-shadow: 0 0 0 4px rgba(29, 155, 240, 0.18);
 }
 
+/* 「つぶやく」を押した直後、ここにフォーカスが戻ったことを一瞬の脈動で知らせる。
+   JS 側で .just-saved を付け外し → 0.7s で自然消滅。 */
+@keyframes title-save-pulse {
+  0%   { box-shadow: 0 0 0 4px  rgba(29, 155, 240, 0.18); }
+  30%  { box-shadow: 0 0 0 10px rgba(29, 155, 240, 0.35); }
+  100% { box-shadow: 0 0 0 4px  rgba(29, 155, 240, 0.18); }
+}
+
+.field-primary #title.just-saved:focus {
+  animation: title-save-pulse 0.7s ease;
+}
+
 /* ── 任意入力: 詳しく書く ── */
 .field-secondary {
   /* 視覚的に主入力より一段下げる: ラベルも控えめ、枠も薄く */
@@ -353,7 +365,8 @@ body {
   background: rgba(15, 20, 25, 0.03);
 }
 
-/* アバター丸 (単色プレースホルダー / 人型シルエット) */
+/* アバター丸 (単色プレースホルダー / 人型シルエット)
+   align-self: start で上揃え (日時行の高さに合わせる) */
 #list li::before {
   content: "";
   width: 44px;
@@ -362,6 +375,7 @@ body {
   background: #cfd9de;
   grid-column: 1;
   grid-row: 1 / span 10;
+  align-self: start;
   background-image:
     radial-gradient(circle at 50% 38%, #8b98a5 0 10px, transparent 11px),
     radial-gradient(ellipse 60% 50% at 50% 95%, #8b98a5 0 70%, transparent 71%);
@@ -377,17 +391,18 @@ body {
   min-width: 0;
 }
 
-/* 見出し (いまの気持ち) - 改行を含む可能性があるので pre-wrap で保持 */
+/* 見出し (いまの気持ち) - 日時の下、本文の上、太字で目立たせる
+   改行を含む可能性があるので pre-wrap で保持 */
 .memo-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   color: #0f1419;
   letter-spacing: 0.01em;
-  margin-bottom: 2px;
+  margin-top: 2px;
+  margin-bottom: 4px;
   padding: 2px 6px;
   border-radius: 4px;
   cursor: text;
-  padding-right: 36px;
   transition: background 0.12s ease;
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -426,15 +441,17 @@ body {
   box-shadow: inset 0 0 0 1px #1d9bf0;
 }
 
-/* 作成日時 */
+/* 作成日時 (アバター横の位置、X のヘッダー日時風)
+   小さく薄く、本文より上に配置 */
 .memo-date {
   font-size: 13px;
   color: #536471;
   letter-spacing: 0.02em;
-  margin-top: 6px;
+  margin: 0;
   padding: 0 6px;
   text-align: left;
   font-feature-settings: "tnum";
+  line-height: 1.4;
 }
 
 /* 1件削除ボタン */

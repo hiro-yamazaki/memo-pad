@@ -61,7 +61,12 @@ function createMemoLi(title, body, createdAt) {
     }).text("×")
   );
 
-  // タイトル。contenteditable で「クリックして直接編集」できるようにする
+  // 作成日時 (アバター横、X のヘッダーの「日時」位置)
+  $li.append(
+    $("<div>", { class: "memo-date" }).text(formatDate(createdAt))
+  );
+
+  // タイトル (= いまの気持ち)。日時の下、本文の上。contenteditable で直接編集可。
   $li.append(
     $("<h3>", {
       class: "memo-title",
@@ -75,11 +80,6 @@ function createMemoLi(title, body, createdAt) {
       class: "memo-body",
       contenteditable: "true"
     }).text(body)
-  );
-
-  // 作成日時 (右下に小さく表示)
-  $li.append(
-    $("<div>", { class: "memo-date" }).text(formatDate(createdAt))
   );
 
   // [見た目だけ] X風アクションバー (返信/リポスト/いいね/ブックマーク)。
@@ -181,9 +181,13 @@ $("#save").on("click", function () {
     $("#list").prepend(createMemoLi(title, body, createdAt));
   }
 
-  // 入力欄をクリア
-  $("#title").val("");
+  // 入力欄をクリア → メイン入力にフォーカスを戻し、青リングを脈動させて
+  // 「保存できた → ここに次を書ける」を視覚的に伝える。
   $("#text").val("");
+  $("#title").val("").focus().addClass("just-saved");
+  setTimeout(function () {
+    $("#title").removeClass("just-saved");
+  }, 700);
 });
 
 
